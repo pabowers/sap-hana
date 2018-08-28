@@ -1,0 +1,28 @@
+---
+- name: Download XS Advanced Runtime
+  get_url:
+    url: "{{ url_xs_advanced_runtime }}"
+    dest: /hana/shared/install/
+
+- name: Download DI Core
+  get_url:
+    url: "{{ url_di_core }}"
+    dest: /hana/shared/install/
+
+- name: Download SAPUI15
+  get_url:
+    url: "{{ url_sapui15 }}"
+    dest: /hana/shared/install/
+
+- name: Download Portal Services
+  get_url:
+    url: "{{ url_portal_services }}"
+    dest: /hana/shared/install/
+
+- name: Download XS Services
+  get_url:
+    url: "{{ url_xs_services }}"
+    dest: /hana/shared/install/
+
+- name: extract XSA Runtime
+  command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf EXTAPPSER00P_87-70001316.SAR
