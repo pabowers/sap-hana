@@ -1,4 +1,16 @@
 ---
+# This module makes the assumption that the HANA 2.0 database has already been installed
+- name: deploy hdblcm install template for xsa
+  template:
+    src: xsa_configfile.j2
+    dest: /hana/shared/install/XSA.cfg
+
+- name: deploy hdblcm password file for xsa
+  template:
+    src: xsa_passwords.j2
+    dest: /hana/shared/install/XSA_passwords.xml
+
+
 - name: Download XS Advanced Runtime
   get_url:
     url: "{{ url_xs_advanced_runtime }}"
@@ -25,4 +37,12 @@
     dest: /hana/shared/install/
 
 - name: extract XSA Runtime
-  command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf EXTAPPSER00P_87-70001316.SAR
+  command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf EXTAPPSER00P_87-70001316.SAR -R EXTAPPSER00P_87
+  args:
+    chdir: /hana/shared/install
+    creates: /hana/shared/install/EXTAPPSER00P_87
+
+- name: run hdblcm
+  shell: "pwd=$(XSA_passwords.xml); rm XSA_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
+  args:
+    chdir: /hana/shared/install/SAP_HANA_DATABASE
