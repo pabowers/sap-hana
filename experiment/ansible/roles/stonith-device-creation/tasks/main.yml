@@ -1,0 +1,13 @@
+- name: Configure STONITH timeout
+  shell: crm configure property stonith-timeout=900
+  register: timeout_configured
+
+- name: Configure Fence parameters
+  shell: crm configure primitive rsc_st_azure stonith:fence_azure_arm params subscriptionId={{ subscription_id }} resourceGroup={{ resource_group}} tenantId={{ tenant_id }} login={{ login_id }} passwd={{ password }}
+  register: fence_configs
+
+- name: Create fence topology for SBD fencing
+  shell: crm configure fencing_topology stonith-sbd rsc_st_azure
+
+- name: Enable use of STONITH device
+  shell: crm configure property stonith-enabled=true
